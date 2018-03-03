@@ -54,11 +54,10 @@ class RecPlayer extends Component {
     }
   };
   render() {
+    const style = this.props.height == "auto" ? { height: "100%" } : {};
     return (
       <div
-        style={{
-          height: "100%"
-        }}
+        style={style}
         className="RecPlayer"
         ref={element => {
           this.playerContainer = element;
