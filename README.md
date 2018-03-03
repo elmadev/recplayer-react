@@ -5,7 +5,7 @@ React component for recplayer.
 ## Example usage
 
 Run
-`npm install git+https://github.com/ville-j/recplayer-react.git`
+`npm install git+https://github.com/elmadev/recplayer-react.git`
 
 Note: You might need to configure Webpack loader for Babel to process the files in `node_modules/recplayer-react/` folder.
 
