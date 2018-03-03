@@ -39,7 +39,7 @@ class RecPlayer extends Component {
       this.cnt = cnt;
       this.autoResize();
       cnt.loadReplay(urls.recUrl);
-      window.pl.setScale(this.props.zoom || 0.8);
+      cnt.player().setScale(this.props.zoom || 0.8);
     });
   };
   autoResize = () => {
