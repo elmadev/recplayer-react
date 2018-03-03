@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import controller from "recplayer/controller";
+import controller from "recplayer";
 import "./RecPlayer.css";
 
 class RecPlayer extends Component {
