@@ -1,6 +1,6 @@
 # recplayer-react
 
-React component for recplayer
+React component for recplayer.
 
 ## Example usage
 
