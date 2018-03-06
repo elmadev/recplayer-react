@@ -11,10 +11,10 @@ Run
 import RecPlayer from "recplayer-react";
 
 <RecPlayer
-  recUrl="url"
-  levUrl="url"
+  recUrl="http://janka.la:5050/downloads/brec/129645"
+  levUrl="http://janka.la:5050/downloads/lev/398698"
   width="auto"
-  height="auto"
+  height={200}
   zoom={0.7}
   controls
 />

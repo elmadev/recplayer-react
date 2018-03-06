@@ -14,30 +14,28 @@ class RecPlayer extends Component {
     };
   }
   componentWillReceiveProps(nextProps) {
-    this.removeWindowHandles();
+    this.removeAnimationLoop();
     this.playerContainer.querySelector("canvas").remove();
     this.initPlayer({
       levUrl: nextProps.levUrl,
       recUrl: nextProps.recUrl
     });
   }
-  componentWillMount() {
-    window.addEventListener("resize", this.autoResize);
-  }
   componentDidMount() {
+    window.addEventListener("resize", this.autoResize);
     this.initPlayer({
       levUrl: this.props.levUrl,
       recUrl: this.props.recUrl
     });
   }
-  removeWindowHandles = () => {
+  removeAnimationLoop = () => {
     if (this.cnt) {
       this.cnt.removeAnimationLoop();
     }
   };
   componentWillUnmount() {
     window.removeEventListener("resize", this.autoResize);
-    this.removeWindowHandles();
+    this.removeAnimationLoop();
   }
   initPlayer = urls => {
     controller(
@@ -81,41 +79,47 @@ class RecPlayer extends Component {
     }, this.autoResize);
   };
   render() {
-    const style = this.props.height == "auto" ? { height: "100%" } : {};
     return (
       <div
-        style={style}
+        style={{
+          height: this.props.height === "auto" ? "100%" : this.props.height + "px",
+          width: this.props.width === "auto" ? "100%" : this.props.width + "px"
+        }}
         className={
           this.state.fullscreen ? "RecPlayer RecPlayer-fullscreen" : "RecPlayer"
         }
-        ref={element => {
-          this.playerContainer = element;
-        }}
       >
-        {this.props.controls && (
-          <div className="RecPlayer-controls">
-            <div
-              className="RecPlayer-controls-button"
-              style={this.state.playing ? { display: "none" } : {}}
-              onClick={this.playPause}
-            >
-              <img src={PlayIcon} />
+        <div
+          className="RecPlayer-player-container"
+          ref={element => {
+            this.playerContainer = element;
+          }}
+        >
+          {this.props.controls && (
+            <div className="RecPlayer-controls">
+              <div
+                className="RecPlayer-controls-button"
+                style={this.state.playing ? { display: "none" } : {}}
+                onClick={this.playPause}
+              >
+                <img src={PlayIcon} />
+              </div>
+              <div
+                className="RecPlayer-controls-button"
+                style={!this.state.playing ? { display: "none" } : {}}
+                onClick={this.playPause}
+              >
+                <img src={PauseIcon} />
+              </div>
+              <div
+                className="RecPlayer-controls-button RecPlayer-controls-button-fullscreen"
+                onClick={this.fullscreen}
+              >
+                <img src={FullscreenIcon} />
+              </div>
             </div>
-            <div
-              className="RecPlayer-controls-button"
-              style={!this.state.playing ? { display: "none" } : {}}
-              onClick={this.playPause}
-            >
-              <img src={PauseIcon} />
-            </div>
-            <div
-              className="RecPlayer-controls-button RecPlayer-controls-button-fullscreen"
-              onClick={this.fullscreen}
-            >
-              <img src={FullscreenIcon} />
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }
