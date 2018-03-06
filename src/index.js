@@ -82,7 +82,8 @@ class RecPlayer extends Component {
     return (
       <div
         style={{
-          height: this.props.height === "auto" ? "100%" : this.props.height + "px",
+          height:
+            this.props.height === "auto" ? "100%" : this.props.height + "px",
           width: this.props.width === "auto" ? "100%" : this.props.width + "px"
         }}
         className={

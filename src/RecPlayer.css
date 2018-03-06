@@ -17,24 +17,28 @@
   height: 100%;
 }
 
-.RecPlayer img {
+.RecPlayer-controls-button img {
   width: 15px;
   height: 15px;
+  display: block;
 }
 
 .RecPlayer-controls {
   position: absolute;
   bottom: 0;
   color: #fff;
-  background: rgba(0, 0, 0, 0.5);
   width: 100%;
+  transition: all 0.5s;
+}
+
+.RecPlayer-player-container:hover .RecPlayer-controls {
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .RecPlayer-controls-button {
   padding: 12px;
   float: left;
   cursor: pointer;
-  padding-bottom: 8px;
 }
 
 .RecPlayer-controls-button-fullscreen {
