@@ -10,7 +10,8 @@ class RecPlayer extends Component {
     super(props);
     this.state = {
       playing: true,
-      fullscreen: false
+      fullscreen: false,
+      timestamp: "0:00.00"
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -22,6 +23,7 @@ class RecPlayer extends Component {
     });
   }
   componentDidMount() {
+    this._isMounted = true;
     window.addEventListener("resize", this.autoResize);
     this.initPlayer({
       levUrl: this.props.levUrl,
@@ -34,15 +36,23 @@ class RecPlayer extends Component {
     }
   };
   componentWillUnmount() {
+    this._isMounted = false;
     window.removeEventListener("resize", this.autoResize);
     this.removeAnimationLoop();
   }
+  frameCallback = (currentFrame, maxFrames) => {
+    this._isMounted &&
+      this.setState({
+        progress: currentFrame / maxFrames * 100
+      });
+  };
   initPlayer = urls => {
     controller(
       urls.levUrl,
       "http://www.recsource.tv/images",
       this.playerContainer,
-      document
+      document,
+      this.frameCallback
     )(cnt => {
       this.cnt = cnt;
       this.autoResize();
@@ -117,6 +127,14 @@ class RecPlayer extends Component {
                 onClick={this.fullscreen}
               >
                 <img src={FullscreenIcon} />
+              </div>
+              <div className="RecPlayer-controls-progress-bar">
+                <div className="RecPlayer-controls-progress-bar-background">
+                  <div
+                    style={{ width: this.state.progress + "%" }}
+                    className="RecPlayer-controls-progress-bar-progress"
+                  />
+                </div>
               </div>
             </div>
           )}

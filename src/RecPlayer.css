@@ -41,6 +41,35 @@
   cursor: pointer;
 }
 
+.RecPlayer-controls-progress-bar {
+  height: 5px;
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.RecPlayer-controls-progress-bar-background {
+  margin: 17px 0;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.RecPlayer-controls-progress-bar-progress {
+  background: #fff;
+  height: 100%;
+  width: 0;
+}
+
+@import url("https://fonts.googleapis.com/css?family=Roboto+Mono:400,700");
+.RecPlayer-controls-text {
+  padding: 12px;
+  font-size: 0.8rem;
+  line-height: 0.9rem;
+  float: left;
+  font-weight: 500;
+  font-family: "Roboto Mono", monospace;
+}
+
 .RecPlayer-controls-button-fullscreen {
   float: right;
 }
