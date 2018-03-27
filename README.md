@@ -17,7 +17,8 @@ import RecPlayer from "recplayer-react";
   height={200}
   zoom={0.7}
   controls
+  autoPlay={true}
 />
 ```
 
-The `width` and `height` properties can be set either as pixel values, or as "auto" in which case the player will be resized to the size of the parent element. The `zoom` property sets the initial zoom level of the player. The `recUrl` and `levUrl` are of course the urls of the files that should be loaded. If you add `controls` property to the component player controls will be overlaid on the player.
+The `width` and `height` properties can be set either as pixel values, or as "auto" in which case the player will be resized to the size of the parent element. The `zoom` property sets the initial zoom level of the player. The `recUrl` and `levUrl` are of course the urls of the files that should be loaded. If you add `controls` property to the component player controls will be overlaid on the player. With `autoPlay` parameter you can control whether the the playback of the replay will start automatically or not, default value is `false`.

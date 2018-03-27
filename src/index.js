@@ -9,14 +9,16 @@ class RecPlayer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      playing: true,
-      fullscreen: false,
-      timestamp: "0:00.00"
+      playing: props.autoPlay || false,
+      fullscreen: false
     };
   }
   componentWillReceiveProps(nextProps) {
     this.removeAnimationLoop();
     this.playerContainer.querySelector("canvas").remove();
+    this.setState({
+      playing: nextProps.autoPlay || false
+    });
     this.initPlayer({
       levUrl: nextProps.levUrl,
       recUrl: nextProps.recUrl
@@ -52,7 +54,8 @@ class RecPlayer extends Component {
       "http://www.recsource.tv/images",
       this.playerContainer,
       document,
-      this.frameCallback
+      this.frameCallback,
+      this.props.autoPlay || false
     )(cnt => {
       this.cnt = cnt;
       this.autoResize();
