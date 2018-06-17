@@ -43,7 +43,7 @@ class RecPlayer extends Component {
   componentWillUnmount() {
     this._isMounted = false;
     window.removeEventListener("resize", this.autoResize);
-    window.removeEventListener("mouseup", this.onMouseUp);
+    document.removeEventListener("mouseup", this.onMouseUp);
     this.removeAnimationLoop();
   }
   frameCallback = (currentFrame, maxFrames) => {
@@ -99,13 +99,11 @@ class RecPlayer extends Component {
   goToFrame = frame => {
     this.cnt.setFrame(frame);
   };
-  progressBarOnClick = e => {
+  progressBarOnMouseDown = e => {
     this.goToFrame(
       this.state.maxFrames *
         (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
     );
-  };
-  progressBarOnMouseDown = () => {
     this._progressBarDrag = true;
   };
   onMouseUp = () => {
@@ -160,9 +158,8 @@ class RecPlayer extends Component {
               </div>
               <div
                 className="RecPlayer-controls-progress-bar"
-                onClick={e => this.progressBarOnClick(e)}
                 onMouseMove={e => this.progressBarOnMouseMove(e)}
-                onMouseDown={this.progressBarOnMouseDown}
+                onMouseDown={e => this.progressBarOnMouseDown(e)}
               >
                 <div className="RecPlayer-controls-progress-bar-background">
                   <div
