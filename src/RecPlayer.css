@@ -42,13 +42,13 @@
 }
 
 .RecPlayer-controls-progress-bar {
-  height: 5px;
-  margin-left: 40px;
-  margin-right: 40px;
+  padding: 2px 0;
+  margin: 10px 40px;
+  user-select: none;
 }
 
 .RecPlayer-controls-progress-bar-background {
-  margin: 17px 0;
+  margin: 5px 0;
   height: 4px;
   background: rgba(255, 255, 255, 0.1);
   overflow: hidden;

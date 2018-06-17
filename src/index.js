@@ -10,7 +10,8 @@ class RecPlayer extends Component {
     super(props);
     this.state = {
       playing: props.autoPlay || false,
-      fullscreen: false
+      fullscreen: false,
+      maxFrames: 0
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -26,7 +27,9 @@ class RecPlayer extends Component {
   }
   componentDidMount() {
     this._isMounted = true;
+    this._progressBarDrag = false;
     window.addEventListener("resize", this.autoResize);
+    document.addEventListener("mouseup", this.onMouseUp);
     this.initPlayer({
       levUrl: this.props.levUrl,
       recUrl: this.props.recUrl
@@ -40,11 +43,13 @@ class RecPlayer extends Component {
   componentWillUnmount() {
     this._isMounted = false;
     window.removeEventListener("resize", this.autoResize);
+    window.removeEventListener("mouseup", this.onMouseUp);
     this.removeAnimationLoop();
   }
   frameCallback = (currentFrame, maxFrames) => {
     this._isMounted &&
       this.setState({
+        maxFrames: maxFrames,
         progress: (currentFrame / maxFrames) * 100
       });
   };
@@ -94,6 +99,25 @@ class RecPlayer extends Component {
   goToFrame = frame => {
     this.cnt.setFrame(frame);
   };
+  progressBarOnClick = e => {
+    this.goToFrame(
+      this.state.maxFrames *
+        (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
+    );
+  };
+  progressBarOnMouseDown = () => {
+    this._progressBarDrag = true;
+  };
+  onMouseUp = () => {
+    this._progressBarDrag = false;
+  };
+  progressBarOnMouseMove = e => {
+    this._progressBarDrag &&
+      this.goToFrame(
+        this.state.maxFrames *
+          (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
+      );
+  };
   render() {
     return (
       <div
@@ -134,7 +158,12 @@ class RecPlayer extends Component {
               >
                 <img src={FullscreenIcon} />
               </div>
-              <div className="RecPlayer-controls-progress-bar">
+              <div
+                className="RecPlayer-controls-progress-bar"
+                onClick={e => this.progressBarOnClick(e)}
+                onMouseMove={e => this.progressBarOnMouseMove(e)}
+                onMouseDown={this.progressBarOnMouseDown}
+              >
                 <div className="RecPlayer-controls-progress-bar-background">
                   <div
                     style={{ width: this.state.progress + "%" }}
