@@ -45,13 +45,13 @@ class RecPlayer extends Component {
   frameCallback = (currentFrame, maxFrames) => {
     this._isMounted &&
       this.setState({
-        progress: currentFrame / maxFrames * 100
+        progress: (currentFrame / maxFrames) * 100
       });
   };
   initPlayer = urls => {
     controller(
       urls.levUrl,
-      "http://www.recsource.tv/images",
+      this.props.imageUrl || "http://www.recsource.tv/images",
       this.playerContainer,
       document,
       this.frameCallback,
