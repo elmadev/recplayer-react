@@ -91,6 +91,9 @@ class RecPlayer extends Component {
       };
     }, this.autoResize);
   };
+  goToFrame = frame => {
+    this.cnt.setFrame(frame);
+  };
   render() {
     return (
       <div
