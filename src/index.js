@@ -100,13 +100,20 @@ class RecPlayer extends Component {
     this.cnt.setFrame(frame);
   };
   progressBarOnMouseDown = e => {
+    this._progressBarDrag = true;
+    this._wasPlaying = this.cnt.player().playing();
+    if (this._wasPlaying) {
+      this.playPause();
+    }
     this.goToFrame(
       this.state.maxFrames *
         (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
     );
-    this._progressBarDrag = true;
   };
   onMouseUp = () => {
+    if (this._progressBarDrag && this._wasPlaying) {
+      this.playPause();
+    }
     this._progressBarDrag = false;
   };
   progressBarOnMouseMove = e => {
