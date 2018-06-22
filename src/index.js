@@ -28,7 +28,6 @@ class RecPlayer extends Component {
   }
   componentDidMount() {
     this._isMounted = true;
-    this._progressBarDrag = false;
     window.addEventListener("resize", this.autoResize);
     document.addEventListener("mouseup", this.onMouseUp);
     document.addEventListener("mousemove", this.onMouseMove);
@@ -103,7 +102,6 @@ class RecPlayer extends Component {
     this.cnt.setFrame(frame);
   };
   progressBarOnMouseDown = e => {
-    // this._progressBarDrag = true;
     this.setState({
       progressBarDrag: true
     });
