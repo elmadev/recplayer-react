@@ -30,6 +30,7 @@ class RecPlayer extends Component {
     this._progressBarDrag = false;
     window.addEventListener("resize", this.autoResize);
     document.addEventListener("mouseup", this.onMouseUp);
+    document.addEventListener("mousemove", this.onMouseMove);
     this.initPlayer({
       levUrl: this.props.levUrl,
       recUrl: this.props.recUrl
@@ -44,6 +45,7 @@ class RecPlayer extends Component {
     this._isMounted = false;
     window.removeEventListener("resize", this.autoResize);
     document.removeEventListener("mouseup", this.onMouseUp);
+    document.removeEventListener("mousemove", this.onMouseMove);
     this.removeAnimationLoop();
   }
   frameCallback = (currentFrame, maxFrames) => {
@@ -116,12 +118,15 @@ class RecPlayer extends Component {
     }
     this._progressBarDrag = false;
   };
-  progressBarOnMouseMove = e => {
-    this._progressBarDrag &&
-      this.goToFrame(
-        this.state.maxFrames *
-          (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
-      );
+  onMouseMove = e => {
+    if (this._progressBarDrag && this._progressBar) {
+      let pos =
+        (e.pageX - this._progressBar.getBoundingClientRect().left) /
+        this._progressBar.offsetWidth;
+      if (pos < 0) pos = 0;
+      else if (pos > 1) pos = 1;
+      this.goToFrame(this.state.maxFrames * pos);
+    }
   };
   render() {
     return (
@@ -165,7 +170,7 @@ class RecPlayer extends Component {
               </div>
               <div
                 className="RecPlayer-controls-progress-bar"
-                onMouseMove={e => this.progressBarOnMouseMove(e)}
+                ref={el => (this._progressBar = el)}
                 onMouseDown={e => this.progressBarOnMouseDown(e)}
               >
                 <div className="RecPlayer-controls-progress-bar-background">
