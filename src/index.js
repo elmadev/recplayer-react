@@ -12,7 +12,8 @@ class RecPlayer extends Component {
       playing: props.autoPlay || false,
       fullscreen: false,
       maxFrames: 0,
-      progressBarDrag: false
+      progressBarDrag: false,
+      currentFrame: 0
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -52,6 +53,7 @@ class RecPlayer extends Component {
     this._isMounted &&
       this.setState({
         maxFrames: maxFrames,
+        currentFrame: currentFrame > maxFrames ? maxFrames : currentFrame,
         progress: (currentFrame / maxFrames) * 100
       });
   };
@@ -84,12 +86,14 @@ class RecPlayer extends Component {
     }
   };
   playPause = () => {
-    this.cnt.player().playPause();
-    this.setState((prevState, props) => {
-      return {
-        playing: !prevState.playing
-      };
-    });
+    if (this.cnt) {
+      this.cnt.player().playPause();
+      this.setState((prevState, props) => {
+        return {
+          playing: !prevState.playing
+        };
+      });
+    }
   };
   fullscreen = () => {
     this.setState((prevState, props) => {
@@ -99,20 +103,24 @@ class RecPlayer extends Component {
     }, this.autoResize);
   };
   goToFrame = frame => {
-    this.cnt.setFrame(frame);
+    if (this.cnt) {
+      this.cnt.setFrame(frame);
+    }
   };
   progressBarOnMouseDown = e => {
-    this.setState({
-      progressBarDrag: true
-    });
-    this._wasPlaying = this.cnt.player().playing();
-    if (this._wasPlaying) {
-      this.playPause();
+    if (this.cnt) {
+      this.setState({
+        progressBarDrag: true
+      });
+      this._wasPlaying = this.cnt.player().playing();
+      if (this._wasPlaying) {
+        this.playPause();
+      }
+      this.goToFrame(
+        this.state.maxFrames *
+          (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
+      );
     }
-    this.goToFrame(
-      this.state.maxFrames *
-        (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
-    );
   };
   onMouseUp = () => {
     if (this.state.progressBarDrag && this._wasPlaying) {
@@ -131,6 +139,14 @@ class RecPlayer extends Component {
       else if (pos > 1) pos = 1;
       this.goToFrame(this.state.maxFrames * pos);
     }
+  };
+  frameToTimestamp = frame => {
+    let time = Math.floor((frame * 100) / 30);
+    let csec = (time % 100).toString().padStart(2, 0);
+    time = Math.floor(time / 100);
+    let sec = (time % 60).toString().padStart(2, 0);
+    time = Math.floor(time / 60);
+    return time > 0 ? time + ":" + sec + ":" + csec : sec + ":" + csec;
   };
   render() {
     let className = this.state.fullscreen
@@ -157,26 +173,6 @@ class RecPlayer extends Component {
           {this.props.controls && (
             <div className="RecPlayer-controls">
               <div
-                className="RecPlayer-controls-button"
-                style={this.state.playing ? { display: "none" } : {}}
-                onClick={this.playPause}
-              >
-                <img src={PlayIcon} />
-              </div>
-              <div
-                className="RecPlayer-controls-button"
-                style={!this.state.playing ? { display: "none" } : {}}
-                onClick={this.playPause}
-              >
-                <img src={PauseIcon} />
-              </div>
-              <div
-                className="RecPlayer-controls-button RecPlayer-controls-button-fullscreen"
-                onClick={this.fullscreen}
-              >
-                <img src={FullscreenIcon} />
-              </div>
-              <div
                 className="RecPlayer-controls-progress-bar"
                 ref={el => (this._progressBar = el)}
                 onMouseDown={e => this.progressBarOnMouseDown(e)}
@@ -186,6 +182,31 @@ class RecPlayer extends Component {
                     style={{ width: this.state.progress + "%" }}
                     className="RecPlayer-controls-progress-bar-progress"
                   />
+                </div>
+              </div>
+              <div className="RecPlayer-controls-bottom-row">
+                <div
+                  className="RecPlayer-controls-button"
+                  style={this.state.playing ? { display: "none" } : {}}
+                  onClick={this.playPause}
+                >
+                  <img src={PlayIcon} />
+                </div>
+                <div
+                  className="RecPlayer-controls-button"
+                  style={!this.state.playing ? { display: "none" } : {}}
+                  onClick={this.playPause}
+                >
+                  <img src={PauseIcon} />
+                </div>
+                <div className="RecPlayer-controls-timestamp">
+                  {this.frameToTimestamp(this.state.currentFrame)}
+                </div>
+                <div
+                  className="RecPlayer-controls-button RecPlayer-controls-button-fullscreen"
+                  onClick={this.fullscreen}
+                >
+                  <img src={FullscreenIcon} />
                 </div>
               </div>
             </div>

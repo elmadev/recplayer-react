@@ -48,15 +48,17 @@
 }
 
 .RecPlayer-controls-progress-bar {
-  padding: 2px 0;
-  margin: 10px 40px;
   user-select: none;
+  padding-top: 5px;
+}
+
+.RecPlayer-controls-progress-bar:hover {
+  cursor: pointer;
 }
 
 .RecPlayer-controls-progress-bar-background {
-  margin: 5px 0;
   height: 4px;
-  background: rgba(255, 255, 255, 0.1);
+  background: #3a3a3a;
   overflow: hidden;
 }
 
@@ -66,20 +68,26 @@
   width: 0;
 }
 
-@import url("https://fonts.googleapis.com/css?family=Roboto+Mono:400,700");
-.RecPlayer-controls-text {
-  padding: 12px;
-  font-size: 0.8rem;
-  line-height: 0.9rem;
-  float: left;
-  font-weight: 500;
-  font-family: "Roboto Mono", monospace;
-}
-
 .RecPlayer-controls-button-fullscreen {
   float: right;
 }
 
 .RecPlayer canvas {
   display: block;
+}
+@import url("https://fonts.googleapis.com/css?family=Roboto+Mono:400,700");
+.RecPlayer-controls-timestamp {
+  padding: 0;
+  line-height: 2.4rem;
+  font-family: monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: "Roboto Mono", monospace;
+  float: left;
+}
+
+.RecPlayer-controls-bottom-row {
+  background: #212121;
+  overflow: hidden;
+  z-index: 9;
 }
