@@ -11,7 +11,8 @@ class RecPlayer extends Component {
     this.state = {
       playing: props.autoPlay || false,
       fullscreen: false,
-      maxFrames: 0
+      maxFrames: 0,
+      progressBarDrag: false
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -102,7 +103,10 @@ class RecPlayer extends Component {
     this.cnt.setFrame(frame);
   };
   progressBarOnMouseDown = e => {
-    this._progressBarDrag = true;
+    // this._progressBarDrag = true;
+    this.setState({
+      progressBarDrag: true
+    });
     this._wasPlaying = this.cnt.player().playing();
     if (this._wasPlaying) {
       this.playPause();
@@ -113,13 +117,15 @@ class RecPlayer extends Component {
     );
   };
   onMouseUp = () => {
-    if (this._progressBarDrag && this._wasPlaying) {
+    if (this.state.progressBarDrag && this._wasPlaying) {
       this.playPause();
     }
-    this._progressBarDrag = false;
+    this.setState({
+      progressBarDrag: false
+    });
   };
   onMouseMove = e => {
-    if (this._progressBarDrag && this._progressBar) {
+    if (this.state.progressBarDrag && this._progressBar) {
       let pos =
         (e.pageX - this._progressBar.getBoundingClientRect().left) /
         this._progressBar.offsetWidth;
@@ -129,6 +135,12 @@ class RecPlayer extends Component {
     }
   };
   render() {
+    let className = this.state.fullscreen
+      ? "RecPlayer RecPlayer-fullscreen"
+      : "RecPlayer";
+
+    if (this.state.progressBarDrag) className += " RecPlayer-progressBar-drag";
+
     return (
       <div
         style={{
@@ -136,9 +148,7 @@ class RecPlayer extends Component {
             this.props.height === "auto" ? "100%" : this.props.height + "px",
           width: this.props.width === "auto" ? "100%" : this.props.width + "px"
         }}
-        className={
-          this.state.fullscreen ? "RecPlayer RecPlayer-fullscreen" : "RecPlayer"
-        }
+        className={className}
       >
         <div
           className="RecPlayer-player-container"
