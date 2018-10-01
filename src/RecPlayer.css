@@ -37,6 +37,7 @@
 }
 
 .RecPlayer-player-container:hover .RecPlayer-controls,
+.RecPlayer-player-container:focus .RecPlayer-controls,
 .RecPlayer-progressBar-drag .RecPlayer-controls {
   opacity: 1;
 }

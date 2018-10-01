@@ -148,6 +148,9 @@ class RecPlayer extends Component {
     time = Math.floor(time / 60);
     return time > 0 ? time + ":" + sec + ":" + csec : sec + ":" + csec;
   };
+  playerContainerOnTap = () => {
+    this.playerContainer.focus();
+  }
   render() {
     let className = this.state.fullscreen
       ? "RecPlayer RecPlayer-fullscreen"
@@ -166,6 +169,8 @@ class RecPlayer extends Component {
       >
         <div
           className="RecPlayer-player-container"
+          onTouchStart={this.playerContainerOnTap}
+          tabIndex="0"
           ref={element => {
             this.playerContainer = element;
           }}
