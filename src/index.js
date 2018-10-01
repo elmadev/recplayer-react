@@ -122,6 +122,22 @@ class RecPlayer extends Component {
       );
     }
   };
+  progressBarOnTouchStart = () => {
+    this._wasPlaying = this.cnt.player().playing();
+      if (this._wasPlaying) {
+        this.playPause();
+      }
+  }
+  progressBarOnTouchMove = (e) => {
+    if (this._progressBar) {
+      let pos =
+        (e.touches[0].clientX - this._progressBar.getBoundingClientRect().left) /
+        this._progressBar.offsetWidth;
+      if (pos < 0) pos = 0;
+      else if (pos > 1) pos = 1;
+      this.goToFrame(this.state.maxFrames * pos);
+    }
+  }
   onMouseUp = () => {
     if (this.state.progressBarDrag && this._wasPlaying) {
       this.playPause();
@@ -130,6 +146,14 @@ class RecPlayer extends Component {
       progressBarDrag: false
     });
   };
+  progressBarOnTouchEnd = () => {
+    if (this._wasPlaying) {
+      this.playPause();
+    }
+    this.setState({
+      progressBarDrag: false
+    });
+  }
   onMouseMove = e => {
     if (this.state.progressBarDrag && this._progressBar) {
       let pos =
@@ -181,6 +205,9 @@ class RecPlayer extends Component {
                 className="RecPlayer-controls-progress-bar"
                 ref={el => (this._progressBar = el)}
                 onMouseDown={e => this.progressBarOnMouseDown(e)}
+                onTouchMove={e => this.progressBarOnTouchMove(e)}
+                onTouchStart={this.progressBarOnTouchStart}
+                onTouchEnd={this.progressBarOnTouchEnd}
               >
                 <div className="RecPlayer-controls-progress-bar-background">
                   <div
