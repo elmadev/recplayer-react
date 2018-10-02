@@ -37,6 +37,7 @@
 }
 
 .RecPlayer-player-container:hover .RecPlayer-controls,
+.RecPlayer-player-container:focus .RecPlayer-controls,
 .RecPlayer-progressBar-drag .RecPlayer-controls {
   opacity: 1;
 }
@@ -48,8 +49,11 @@
 }
 
 .RecPlayer-controls-progress-bar {
+  height: 10px;
+  margin-bottom: -6px;
+  position: relative;
   user-select: none;
-  padding-top: 5px;
+  padding-top: 6px;
 }
 
 .RecPlayer-controls-progress-bar:hover {

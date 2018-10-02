@@ -122,6 +122,22 @@ class RecPlayer extends Component {
       );
     }
   };
+  progressBarOnTouchStart = () => {
+    this._wasPlaying = this.cnt.player().playing();
+      if (this._wasPlaying) {
+        this.playPause();
+      }
+  }
+  progressBarOnTouchMove = (e) => {
+    if (this._progressBar) {
+      let pos =
+        (e.touches[0].clientX - this._progressBar.getBoundingClientRect().left) /
+        this._progressBar.offsetWidth;
+      if (pos < 0) pos = 0;
+      else if (pos > 1) pos = 1;
+      this.goToFrame(this.state.maxFrames * pos);
+    }
+  }
   onMouseUp = () => {
     if (this.state.progressBarDrag && this._wasPlaying) {
       this.playPause();
@@ -130,6 +146,14 @@ class RecPlayer extends Component {
       progressBarDrag: false
     });
   };
+  progressBarOnTouchEnd = () => {
+    if (this._wasPlaying) {
+      this.playPause();
+    }
+    this.setState({
+      progressBarDrag: false
+    });
+  }
   onMouseMove = e => {
     if (this.state.progressBarDrag && this._progressBar) {
       let pos =
@@ -148,6 +172,9 @@ class RecPlayer extends Component {
     time = Math.floor(time / 60);
     return time > 0 ? time + ":" + sec + ":" + csec : sec + ":" + csec;
   };
+  playerContainerOnTap = () => {
+    this.playerContainer.focus();
+  }
   render() {
     let className = this.state.fullscreen
       ? "RecPlayer RecPlayer-fullscreen"
@@ -166,6 +193,8 @@ class RecPlayer extends Component {
       >
         <div
           className="RecPlayer-player-container"
+          onTouchStart={this.playerContainerOnTap}
+          tabIndex="0"
           ref={element => {
             this.playerContainer = element;
           }}
@@ -176,6 +205,9 @@ class RecPlayer extends Component {
                 className="RecPlayer-controls-progress-bar"
                 ref={el => (this._progressBar = el)}
                 onMouseDown={e => this.progressBarOnMouseDown(e)}
+                onTouchMove={e => this.progressBarOnTouchMove(e)}
+                onTouchStart={this.progressBarOnTouchStart}
+                onTouchEnd={this.progressBarOnTouchEnd}
               >
                 <div className="RecPlayer-controls-progress-bar-background">
                   <div
