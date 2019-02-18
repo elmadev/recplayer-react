@@ -17,15 +17,19 @@ class RecPlayer extends Component {
     };
   }
   componentWillReceiveProps(nextProps) {
-    this.removeAnimationLoop();
-    this.playerContainer.querySelector("canvas").remove();
     this.setState({
       playing: nextProps.autoPlay || false
     });
-    this.initPlayer({
-      levUrl: nextProps.levUrl,
-      recUrl: nextProps.recUrl
-    });
+    if (this.props.levUrl !== nextProps.levUrl) {
+      this.removeAnimationLoop();
+      this.playerContainer.querySelector("canvas").remove();
+      this.initPlayer({
+        levUrl: nextProps.levUrl,
+        recUrl: nextProps.recUrl
+      });
+    } else if (this.props.recUrl !== nextProps.recUrl) {
+      nextProps.recUrl && this.cnt.loadReplay(nextProps.recUrl);
+    }
   }
   componentDidMount() {
     this._isMounted = true;
@@ -68,7 +72,7 @@ class RecPlayer extends Component {
     )(cnt => {
       this.cnt = cnt;
       this.autoResize();
-      cnt.loadReplay(urls.recUrl);
+      urls.recUrl && cnt.loadReplay(urls.recUrl);
       cnt.player().setScale(this.props.zoom || 0.8);
     });
   };
@@ -124,20 +128,21 @@ class RecPlayer extends Component {
   };
   progressBarOnTouchStart = () => {
     this._wasPlaying = this.cnt.player().playing();
-      if (this._wasPlaying) {
-        this.playPause();
-      }
-  }
-  progressBarOnTouchMove = (e) => {
+    if (this._wasPlaying) {
+      this.playPause();
+    }
+  };
+  progressBarOnTouchMove = e => {
     if (this._progressBar) {
       let pos =
-        (e.touches[0].clientX - this._progressBar.getBoundingClientRect().left) /
+        (e.touches[0].clientX -
+          this._progressBar.getBoundingClientRect().left) /
         this._progressBar.offsetWidth;
       if (pos < 0) pos = 0;
       else if (pos > 1) pos = 1;
       this.goToFrame(this.state.maxFrames * pos);
     }
-  }
+  };
   onMouseUp = () => {
     if (this.state.progressBarDrag && this._wasPlaying) {
       this.playPause();
@@ -153,7 +158,7 @@ class RecPlayer extends Component {
     this.setState({
       progressBarDrag: false
     });
-  }
+  };
   onMouseMove = e => {
     if (this.state.progressBarDrag && this._progressBar) {
       let pos =
@@ -174,7 +179,7 @@ class RecPlayer extends Component {
   };
   playerContainerOnTap = () => {
     this.playerContainer.focus();
-  }
+  };
   render() {
     let className = this.state.fullscreen
       ? "RecPlayer RecPlayer-fullscreen"
