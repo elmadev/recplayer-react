@@ -180,6 +180,16 @@ class RecPlayer extends Component {
   playerContainerOnTap = () => {
     this.playerContainer.focus();
   };
+  onClick = e => {
+    if (e.target.localName === 'canvas') {
+      this.playPause();
+    }
+  }
+  onDoubleClick = e => {
+    if (e.target.localName === 'canvas') {
+      this.fullscreen();
+    }
+  }
   render() {
     let className = this.state.fullscreen
       ? "RecPlayer RecPlayer-fullscreen"
@@ -195,6 +205,8 @@ class RecPlayer extends Component {
           width: this.props.width === "auto" ? "100%" : this.props.width + "px"
         }}
         className={className}
+        onClick={this.onClick}
+        onDoubleClick={this.onDoubleClick}
       >
         <div
           className="RecPlayer-player-container"
