@@ -74,8 +74,8 @@ class RecPlayer extends Component {
       this.autoResize();
       urls.recUrl && cnt.loadReplay(urls.recUrl);
       cnt.player().setScale(this.props.zoom || 0.8);
-      if (props.onInitialize) {
-        props.onInitialize(cnt);
+      if (this.props.onInitialize) {
+        this.props.onInitialize(cnt);
       }
     });
   };
