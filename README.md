@@ -19,6 +19,12 @@ import RecPlayer from "recplayer-react";
   controls
   autoPlay
   imageUrl="http://www.recsource.tv/images"
+  onInitialize={cnt => someFunction(cnt)}
+  levelOptions={{
+    grass: true,
+    pictures: true,
+    customBackgroundSky: true,
+  }}
 />
 ```
 

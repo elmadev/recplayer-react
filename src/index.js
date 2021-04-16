@@ -74,6 +74,14 @@ class RecPlayer extends Component {
       this.autoResize();
       urls.recUrl && cnt.loadReplay(urls.recUrl);
       cnt.player().setScale(this.props.zoom || 0.8);
+      if (this.props.levelOptions) {
+        const { grass, pictures, customBackgroundSky } = this.props.levelOptions;
+        cnt.player().setLevOpts({
+          grass: typeof grass === 'boolean' ? grass : true,
+          pictures: typeof pictures === 'boolean' ? pictures : true,
+          customBackgroundSky: typeof customBackgroundSky === 'boolean' ? customBackgroundSky : true,
+        });
+      }
       if (this.props.onInitialize) {
         this.props.onInitialize(cnt);
       }
