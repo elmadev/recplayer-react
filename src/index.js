@@ -90,8 +90,9 @@ class RecPlayer extends Component {
       this.cnt = cnt;
       this.autoResize();
       if (urls.recUrl) {
-        if (Array.isArray(urls.recUrl)) {
-          urls.recUrl.forEach(r => {
+        const recs = urls.recUrl.split(';');
+        if (Array.isArray(recs)) {
+          recs.forEach(r => {
             cnt.loadReplay(r);
           });
         } else {
