@@ -91,13 +91,9 @@ class RecPlayer extends Component {
       this.autoResize();
       if (urls.recUrl) {
         const recs = urls.recUrl.split(';');
-        if (Array.isArray(recs)) {
-          recs.forEach(r => {
-            cnt.loadReplay(r);
-          });
-        } else {
-          cnt.loadReplay(urls.recUrl);
-        }
+        recs.forEach(r => {
+          cnt.loadReplay(r);
+        });
       }
       cnt.player().setScale(this.props.zoom || 0.8);
       if (this.props.levelOptions) {
