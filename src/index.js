@@ -210,8 +210,37 @@ class RecPlayer extends Component {
     time = Math.floor(time / 60);
     return time > 0 ? time + ":" + sec + ":" + csec : sec + ":" + csec;
   };
-  playerContainerOnTap = () => {
+  playerContainerOnTouchStart = (e) => {
     this.playerContainer.focus();
+    
+    if (e.touches.length === 2) {
+      this._pinch = true;
+    }
+  };
+  playerContainerOnTouchEnd = (e) => {
+    this._pinch = false;
+    this._preDist = null;
+  };
+  playerContainerOnTouchMove = (e) => {
+    if (this._pinch) {
+      const dist = Math.hypot(
+        e.touches[0].pageX - e.touches[1].pageX,
+        e.touches[0].pageY - e.touches[1].pageY
+      );
+
+      if (this._preDist) {
+        const pl = this.cnt.player();
+        const scale = pl.scale();
+
+        if (this._preDist < dist) {
+          pl.setScale(scale * 1.2);
+        } else {
+          pl.setScale(scale / 1.2);
+        }
+      }
+
+      this._preDist = dist;
+    }
   };
   onClick = e => {
     if (e.target.localName === 'canvas') {
@@ -243,7 +272,9 @@ class RecPlayer extends Component {
       >
         <div
           className="RecPlayer-player-container"
-          onTouchStart={this.playerContainerOnTap}
+          onTouchStart={this.playerContainerOnTouchStart}
+          onTouchEnd={this.playerContainerOnTouchEnd}
+          onTouchMove={this.playerContainerOnTouchMove}
           tabIndex="0"
           ref={element => {
             this.playerContainer = element;
