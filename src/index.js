@@ -21,14 +21,19 @@ class RecPlayer extends Component {
       playing: nextProps.autoPlay || false
     });
     if (this.props.levUrl !== nextProps.levUrl) {
-      this.removeAnimationLoop();
-      this.playerContainer.querySelector("canvas").remove();
-      this.initPlayer({
-        levUrl: nextProps.levUrl,
-        recUrl: nextProps.recUrl
-      });
-    } else if (this.props.recUrl !== nextProps.recUrl) {
-      nextProps.recUrl && this.cnt.loadReplay(nextProps.recUrl);
+      this.updateLevRec(nextProps.recUrl, nextProps.levUrl);
+      return;
+    }
+    if (this.props.recUrl !== nextProps.recUrl && nextProps.recUrl) {
+      if (typeof nextProps.merge === 'boolean') {
+        if (nextProps.merge) {
+          this.updateLevRec(nextProps.recUrl);
+          return;
+        }
+        this.updateLevRec(nextProps.recUrl, this.props.levUrl);
+        return;
+      }
+      this.updateLevRec(nextProps.recUrl);
     }
   }
   componentDidMount() {
@@ -41,6 +46,18 @@ class RecPlayer extends Component {
       recUrl: this.props.recUrl
     });
   }
+  updateLevRec = (recUrl, levUrl = '') => {
+    if (levUrl) {
+      this.removeAnimationLoop();
+      this.playerContainer.querySelector("canvas").remove();
+      this.initPlayer({
+        levUrl,
+        recUrl,
+      });
+      return;
+    }
+    this.cnt.loadReplay(recUrl);
+  };
   removeAnimationLoop = () => {
     if (this.cnt) {
       this.cnt.removeAnimationLoop();
@@ -72,10 +89,23 @@ class RecPlayer extends Component {
     )(cnt => {
       this.cnt = cnt;
       this.autoResize();
-      urls.recUrl && cnt.loadReplay(urls.recUrl);
+      if (urls.recUrl) {
+        const recs = urls.recUrl.split(';');
+        recs.forEach(r => {
+          cnt.loadReplay(r);
+        });
+      }
       cnt.player().setScale(this.props.zoom || 0.8);
-      if (props.onInitialize) {
-        props.onInitialize(cnt);
+      if (this.props.levelOptions) {
+        const { grass, pictures, customBackgroundSky } = this.props.levelOptions;
+        cnt.player().setLevOpts({
+          grass: typeof grass === 'boolean' ? grass : true,
+          pictures: typeof pictures === 'boolean' ? pictures : true,
+          customBackgroundSky: typeof customBackgroundSky === 'boolean' ? customBackgroundSky : true,
+        });
+      }
+      if (this.props.onInitialize) {
+        this.props.onInitialize(cnt);
       }
     });
   };
