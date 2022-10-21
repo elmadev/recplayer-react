@@ -17,9 +17,6 @@ class RecPlayer extends Component {
     };
   }
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      playing: nextProps.autoPlay || false
-    });
     if (this.props.levUrl !== nextProps.levUrl) {
       this.updateLevRec(nextProps.recUrl, nextProps.levUrl);
       return;
@@ -38,9 +35,12 @@ class RecPlayer extends Component {
   }
   componentDidMount() {
     this._isMounted = true;
+    this._wakeLock = null;
     window.addEventListener("resize", this.autoResize);
     document.addEventListener("mouseup", this.onMouseUp);
     document.addEventListener("mousemove", this.onMouseMove);
+    document.addEventListener("visibilitychange", this.enableWakeLock);
+
     this.initPlayer({
       levUrl: this.props.levUrl,
       recUrl: this.props.recUrl
@@ -68,7 +68,9 @@ class RecPlayer extends Component {
     window.removeEventListener("resize", this.autoResize);
     document.removeEventListener("mouseup", this.onMouseUp);
     document.removeEventListener("mousemove", this.onMouseMove);
+    document.removeEventListener("visibilitychange", this.enableWakeLock);
     this.removeAnimationLoop();
+    this.disableWakeLock();
   }
   frameCallback = (currentFrame, maxFrames) => {
     this._isMounted &&
@@ -107,6 +109,7 @@ class RecPlayer extends Component {
       if (this.props.onInitialize) {
         this.props.onInitialize(cnt);
       }
+      this.enableWakeLock();
     });
   };
   autoResize = () => {
@@ -125,10 +128,13 @@ class RecPlayer extends Component {
   playPause = () => {
     if (this.cnt) {
       this.cnt.player().playPause();
-      this.setState((prevState, props) => {
-        return {
-          playing: !prevState.playing
-        };
+      if(this.cnt.player().playing()) {
+        this.enableWakeLock();
+      } else {
+        this.disableWakeLock();
+      }
+      this.setState({
+        playing: this.cnt.player().playing()
       });
     }
   };
@@ -177,6 +183,10 @@ class RecPlayer extends Component {
     }
   };
   onMouseUp = () => {
+    setTimeout(() => {
+      this._mouseDrag = false;
+      this._mouseDown = false;
+    }, 100);
     if (this.state.progressBarDrag && this._wasPlaying) {
       this.playPause();
     }
@@ -193,6 +203,9 @@ class RecPlayer extends Component {
     });
   };
   onMouseMove = e => {
+    if(this._mouseDown)
+      this._mouseDrag = true;
+
     if (this.state.progressBarDrag && this._progressBar) {
       let pos =
         (e.pageX - this._progressBar.getBoundingClientRect().left) /
@@ -243,13 +256,50 @@ class RecPlayer extends Component {
     }
   };
   onClick = e => {
-    if (e.target.localName === 'canvas') {
+    if (e.target.localName === 'canvas' && !this._mouseDrag) {
       this.playPause();
+    }
+  }
+  onMouseDown = e => {
+    if (e.target.localName === 'canvas') {
+      this._mouseDown = true;
     }
   }
   onDoubleClick = e => {
     if (e.target.localName === 'canvas') {
       this.fullscreen();
+    }
+  }
+  enableWakeLock = async () => {
+    if(!this.props.wakeLock) {
+      return;
+    }
+
+    if(!this.cnt || !this.cnt.player().playing()) {
+      return;
+    }
+
+    if(document.visibilityState !== "visible") {
+      return;
+    }
+
+    if(this._wakeLock) {
+      return;
+    }
+
+    try {
+      this._wakeLock = await navigator.wakeLock.request('screen');
+      this._wakeLock.addEventListener('release', () => {
+        this._wakeLock = null;
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  disableWakeLock = async () => {
+    if(this._wakeLock) {
+      await this._wakeLock.release();
+      this._wakeLock = null;
     }
   }
   render() {
@@ -268,6 +318,7 @@ class RecPlayer extends Component {
         }}
         className={className}
         onClick={this.onClick}
+        onMouseDown={this.onMouseDown}
         onDoubleClick={this.onDoubleClick}
       >
         <div
@@ -326,6 +377,8 @@ class RecPlayer extends Component {
           )}
         </div>
       </div>
+      
+      
     );
   }
 }
