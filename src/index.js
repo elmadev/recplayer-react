@@ -16,21 +16,21 @@ class RecPlayer extends Component {
       currentFrame: 0
     };
   }
-  componentWillReceiveProps(nextProps) {
-    if (this.props.levUrl !== nextProps.levUrl) {
-      this.updateLevRec(nextProps.recUrl, nextProps.levUrl);
+  componentDidUpdate(prevProps) {
+    if (this.props.levUrl !== prevProps.levUrl) {
+      this.updateLevRec(this.props.recUrl, this.props.levUrl);
       return;
     }
-    if (this.props.recUrl !== nextProps.recUrl && nextProps.recUrl) {
-      if (typeof nextProps.merge === 'boolean') {
-        if (nextProps.merge) {
-          this.updateLevRec(nextProps.recUrl);
+    if (this.props.recUrl !== prevProps.recUrl && this.props.recUrl) {
+      if (typeof this.props.merge === 'boolean') {
+        if (this.props.merge) {
+          this.updateLevRec(this.props.recUrl);
           return;
         }
-        this.updateLevRec(nextProps.recUrl, this.props.levUrl);
+        this.updateLevRec(this.props.recUrl, this.props.levUrl);
         return;
       }
-      this.updateLevRec(nextProps.recUrl);
+      this.updateLevRec(this.props.recUrl);
     }
   }
   componentDidMount() {
@@ -377,8 +377,6 @@ class RecPlayer extends Component {
           )}
         </div>
       </div>
-      
-      
     );
   }
 }

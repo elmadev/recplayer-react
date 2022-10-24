@@ -9,8 +9,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --watch",
-    "build": "webpack",
+    "start": "npx rollup -c -w",
+    "build": "npx rollup -c",
     "prepare": "npm run build"
   },
   "author": {
@@ -18,27 +18,16 @@
     "email": "ville.jankala@gmail.com"
   },
   "license": "ISC",
-  "peerDependencies": {
-    "react": "^16.2.0"
-  },
-  "dependencies": {
-    "react": "^16.8.1",
-    "recplayer": "git+https://github.com/elmadev/recplayer.git",
-    "webpack": "3.8.1"
-  },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-plugin-transform-react-jsx": "^6.24.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "css-loader": "^0.28.11",
-    "style-loader": "^0.20.3",
-    "url-loader": "^1.1.1"
+    "@babel/preset-env": "^7.19.4",
+    "@babel/preset-react": "^7.18.6",
+    "@rollup/plugin-babel": "^6.0.2",
+    "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-image": "^3.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "react": "^18.2.0",
+    "recplayer": "github:elmadev/recplayer",
+    "rollup": "^3.2.3",
+    "rollup-plugin-postcss": "^4.0.2"
   }
 }
