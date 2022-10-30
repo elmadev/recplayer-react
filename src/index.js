@@ -17,6 +17,9 @@ class RecPlayer extends Component {
     };
   }
   componentDidUpdate(prevProps) {
+    if (!isNaN(this.props.frame) && this.props.frame !== prevProps.frame) {
+      this.goToFrame(this.props.frame);
+    }
     if (this.props.levUrl !== prevProps.levUrl) {
       this.updateLevRec(this.props.recUrl, this.props.levUrl);
       return;
@@ -128,14 +131,16 @@ class RecPlayer extends Component {
   playPause = () => {
     if (this.cnt) {
       this.cnt.player().playPause();
-      if(this.cnt.player().playing()) {
+      const isPlaying = this.cnt.player().playing();
+      if (isPlaying) {
         this.enableWakeLock();
       } else {
         this.disableWakeLock();
       }
       this.setState({
-        playing: this.cnt.player().playing()
+        playing: isPlaying
       });
+      this.props.onPlayPause && this.props.onPlayPause(isPlaying);
     }
   };
   fullscreen = () => {
@@ -161,7 +166,7 @@ class RecPlayer extends Component {
       }
       this.goToFrame(
         this.state.maxFrames *
-          (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
+        (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
       );
     }
   };
@@ -203,7 +208,7 @@ class RecPlayer extends Component {
     });
   };
   onMouseMove = e => {
-    if(this._mouseDown)
+    if (this._mouseDown)
       this._mouseDrag = true;
 
     if (this.state.progressBarDrag && this._progressBar) {
@@ -225,7 +230,7 @@ class RecPlayer extends Component {
   };
   playerContainerOnTouchStart = (e) => {
     this.playerContainer.focus();
-    
+
     if (e.touches.length === 2) {
       this._pinch = true;
     }
@@ -271,19 +276,19 @@ class RecPlayer extends Component {
     }
   }
   enableWakeLock = async () => {
-    if(!this.props.wakeLock) {
+    if (!this.props.wakeLock) {
       return;
     }
 
-    if(!this.cnt || !this.cnt.player().playing()) {
+    if (!this.cnt || !this.cnt.player().playing()) {
       return;
     }
 
-    if(document.visibilityState !== "visible") {
+    if (document.visibilityState !== "visible") {
       return;
     }
 
-    if(this._wakeLock) {
+    if (this._wakeLock) {
       return;
     }
 
@@ -297,7 +302,7 @@ class RecPlayer extends Component {
     }
   }
   disableWakeLock = async () => {
-    if(this._wakeLock) {
+    if (this._wakeLock) {
       await this._wakeLock.release();
       this._wakeLock = null;
     }
