@@ -113,6 +113,14 @@ class RecPlayer extends Component {
         this.props.onInitialize(cnt);
       }
       this.enableWakeLock();
+      if (this.props.fitLev) {
+        cnt.player().fitLev();
+      }
+      if (!urls.recUrl) {
+        if (this.props.showStartPos) {
+          cnt.player().startPos();
+        }
+      }
     });
   };
   autoResize = () => {
