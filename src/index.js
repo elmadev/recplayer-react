@@ -315,6 +315,24 @@ class RecPlayer extends Component {
       this._wakeLock = null;
     }
   }
+  latestApple = () => {
+    if (this.cnt && this.cnt.player().appleTimes()) {
+      const latestApple = this.cnt
+        .player()
+        .appleTimes()
+        .sort((a, b) => b.frame - a.frame)
+        .find((appleTime) => appleTime.frame <= this.state.currentFrame);
+
+      if (latestApple) {
+        return {
+          apple: latestApple.apple,
+          time: this.frameToTimestamp(latestApple.frame),
+        };
+      }
+      return null;
+    }
+  };
+
   render() {
     let className = this.state.fullscreen
       ? "RecPlayer RecPlayer-fullscreen"
@@ -384,6 +402,13 @@ class RecPlayer extends Component {
                   onClick={this.fullscreen}
                 >
                   <img src={FullscreenIcon} />
+                </div>
+                <div className="RecPlayer-controls-latest-apple">
+                  {this.cnt && this.latestApple() && (
+                    <div>
+                      {this.latestApple().time} ({this.latestApple().apple})
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
