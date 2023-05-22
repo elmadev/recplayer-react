@@ -76,6 +76,16 @@
   float: right;
 }
 
+.RecPlayer-controls-latest-apple {
+  padding: 0 12px 0 0;
+  line-height: 2.4rem;
+  font-family: monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: "Roboto Mono", monospace;
+  float: right;  
+}
+
 .RecPlayer canvas {
   display: block;
 }
