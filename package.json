@@ -1,6 +1,6 @@
 {
   "name": "recplayer-react",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "React component for recplayer",
   "main": "./build/index.js",
   "repository": {
