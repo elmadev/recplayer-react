@@ -26,19 +26,12 @@ class RecPlayer extends Component {
       this.goToFrame(this.props.frame);
     }
     if (this.props.levUrl !== prevProps.levUrl) {
-      this.updateLevRec(this.props.recUrl, this.props.levUrl);
+      this.recreateController(this.props.recUrl, this.props.levUrl, this.props.shirtUrl);
       return;
     }
     if (this.props.recUrl !== prevProps.recUrl && this.props.recUrl) {
-      if (typeof this.props.merge === 'boolean') {
-        if (this.props.merge) {
-          this.updateLevRec(this.props.recUrl);
-          return;
-        }
-        this.updateLevRec(this.props.recUrl, this.props.levUrl);
-        return;
-      }
-      this.updateLevRec(this.props.recUrl);
+      this.changeReplays(this.props.recUrl, this.props.shirtUrl);
+      return;
     }
   }
   componentDidMount() {
@@ -51,20 +44,24 @@ class RecPlayer extends Component {
 
     this.initPlayer({
       levUrl: this.props.levUrl,
-      recUrl: this.props.recUrl
+      recUrl: this.props.recUrl,
+      shirtUrl: this.props.shirtUrl
     });
   }
-  updateLevRec = (recUrl, levUrl = '') => {
-    if (levUrl) {
-      this.removeAnimationLoop();
-      this.playerContainer.querySelector("canvas").remove();
-      this.initPlayer({
-        levUrl,
-        recUrl,
-      });
-      return;
-    }
-    this.cnt.loadReplay(recUrl);
+
+  changeReplays = (recUrl, shirtUrl) => {
+    const recs = recUrl.split(';');
+    this.cnt.changeReplays(recs, shirtUrl);
+  };
+
+  recreateController = (recUrl, levUrl, shirtUrl) => {
+    this.removeAnimationLoop();
+    this.playerContainer.querySelector("canvas").remove();
+    this.initPlayer({
+      levUrl,
+      recUrl,
+      shirtUrl
+    });
   };
   removeAnimationLoop = () => {
     if (this.cnt) {
@@ -101,9 +98,7 @@ class RecPlayer extends Component {
       this.autoResize();
       if (urls.recUrl) {
         const recs = urls.recUrl.split(';');
-        recs.forEach(r => {
-          cnt.loadReplay(r);
-        });
+        cnt.loadReplays(recs, urls.shirtUrl);
       }
       cnt.player().setScale(this.props.zoom || 0.8);
       if (this.props.levelOptions) {
