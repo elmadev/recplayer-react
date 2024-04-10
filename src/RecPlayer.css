@@ -76,14 +76,31 @@
   float: right;
 }
 
-.RecPlayer-controls-latest-apple {
-  padding: 0 12px 0 0;
+.RecPlayer-controls-button-zoom {
+  float: right;
+  padding: 10px;
+}
+
+.RecPlayer-controls-button-zoom img {
+  width: 18px;
+  height: 18px;
+}
+
+.Recplayer-controls-text {
   line-height: 2.4rem;
   font-family: monospace;
   font-size: 0.8rem;
   font-weight: 500;
   font-family: "Roboto Mono", monospace;
+}
+
+.RecPlayer-controls-latest-apple {
+  padding: 0 12px 0 0;
   float: right;  
+}
+
+.RecPlayer-controls-speed-text {
+  float: right;
 }
 
 .RecPlayer canvas {
@@ -92,11 +109,6 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto+Mono:400,700");
 .RecPlayer-controls-timestamp {
   padding: 0;
-  line-height: 2.4rem;
-  font-family: monospace;
-  font-size: 0.8rem;
-  font-weight: 500;
-  font-family: "Roboto Mono", monospace;
   float: left;
 }
 

@@ -4,6 +4,11 @@ import "./RecPlayer.css";
 import PlayIcon from "./img/play.svg";
 import PauseIcon from "./img/pause.svg";
 import FullscreenIcon from "./img/fullscreen.svg";
+import ZoomOutIcon from "./img/zoomout.svg";
+import ZoomInIcon from "./img/zoomin.svg";
+import ReverseIcon from "./img/reverse.svg";
+import ForwardIcon from "./img/forward.svg";
+import BackwardIcon from "./img/backward.svg";
 
 class RecPlayer extends Component {
   constructor(props) {
@@ -97,11 +102,16 @@ class RecPlayer extends Component {
       }
       cnt.player().setScale(this.props.zoom || 0.8);
       if (this.props.levelOptions) {
-        const { grass, pictures, customBackgroundSky } = this.props.levelOptions;
+        const { grass, pictures, customBackgroundSky, arrows } =
+          this.props.levelOptions;
         cnt.player().setLevOpts({
-          grass: typeof grass === 'boolean' ? grass : true,
-          pictures: typeof pictures === 'boolean' ? pictures : true,
-          customBackgroundSky: typeof customBackgroundSky === 'boolean' ? customBackgroundSky : true,
+          grass: typeof grass === "boolean" ? grass : true,
+          pictures: typeof pictures === "boolean" ? pictures : true,
+          customBackgroundSky:
+            typeof customBackgroundSky === "boolean"
+              ? customBackgroundSky
+              : true,
+          arrows: typeof arrows === "boolean" ? arrows : true,
         });
       }
       if (this.props.onInitialize) {
@@ -327,6 +337,47 @@ class RecPlayer extends Component {
       return null;
     }
   };
+  zoom = (action) => {
+    if (this.cnt && this.cnt.player()) {
+      const pl = this.cnt.player();
+      const scale = pl.scale();
+      if (action === 'in') {
+        pl.setScale(scale * 1.2);
+      }
+      if (action === 'out') {
+        pl.setScale(scale / 1.2);
+      }
+    }
+  };
+  reverse = () => {
+    if (this.cnt && this.cnt.player()) {
+      const pl = this.cnt.player();
+      const speed = pl.speed();
+      pl.setSpeed(-speed);
+    }
+  };
+  speed = (action) => {
+    if (this.cnt && this.cnt.player()) {
+      const pl = this.cnt.player();
+      const speed = pl.speed();
+      if (action === 'faster') {
+        pl.setSpeed(speed / 0.8);
+      }
+      if (action === 'slower') {
+        pl.setSpeed(speed * 0.8);
+      }
+    }
+  };
+  getSpeed = () => {
+    if (this.cnt && this.cnt.player()) {
+      const pl = this.cnt.player();
+      const speed = pl.speed();
+      if (speed) {
+        return `${parseFloat(Math.abs(speed)).toFixed(2)}x`;
+      }
+      return '1.00x';
+    }
+  };
 
   render() {
     let className = this.state.fullscreen
@@ -389,16 +440,64 @@ class RecPlayer extends Component {
                 >
                   <img src={PauseIcon} />
                 </div>
-                <div className="RecPlayer-controls-timestamp">
+                <div className="Recplayer-controls-text RecPlayer-controls-timestamp">
                   {this.frameToTimestamp(this.state.currentFrame)}
                 </div>
                 <div
                   className="RecPlayer-controls-button RecPlayer-controls-button-fullscreen"
                   onClick={this.fullscreen}
+                  title="Fullscreen"
                 >
                   <img src={FullscreenIcon} />
                 </div>
-                <div className="RecPlayer-controls-latest-apple">
+                
+                {this.props.showPlaybackBtns ? (
+                  <>
+                    <div
+                      className="RecPlayer-controls-button RecPlayer-controls-button-zoom"
+                      onClick={() => this.speed('faster')}
+                      title="Faster playback speed"
+                    >
+                      <img src={ForwardIcon} />
+                    </div>
+                    <div className="Recplayer-controls-text RecPlayer-controls-speed-text">
+                      {this.getSpeed()}
+                    </div>
+                    <div
+                      className="RecPlayer-controls-button RecPlayer-controls-button-zoom"
+                      onClick={() => this.speed('slower')}
+                      title="Slower playback speed"
+                    >
+                      <img src={BackwardIcon} />
+                    </div>
+                    <div
+                      className="RecPlayer-controls-button RecPlayer-controls-button-zoom"
+                      onClick={() => this.reverse()}
+                      title={`Reverse playback`}
+                    >
+                      <img src={ReverseIcon} />
+                    </div>
+                  </>
+                ) : null}
+                {this.props.showZoomBtns ? (
+                  <>
+                    <div
+                      className="RecPlayer-controls-button RecPlayer-controls-button-zoom"
+                      onClick={() => this.zoom('in')}
+                      title="Zoom in"
+                    >
+                      <img src={ZoomInIcon} />
+                    </div>
+                    <div
+                      className="RecPlayer-controls-button RecPlayer-controls-button-zoom"
+                      onClick={() => this.zoom('out')}
+                      title="Zoom out"
+                    >
+                      <img src={ZoomOutIcon} />
+                    </div>
+                  </>
+                ) : null}
+                <div className="Recplayer-controls-text RecPlayer-controls-latest-apple">
                   {this.cnt && this.latestApple() && (
                     <div>
                       {this.latestApple().time} ({this.latestApple().apple})
