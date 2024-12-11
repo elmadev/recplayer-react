@@ -18,15 +18,20 @@ class RecPlayer extends Component {
       fullscreen: false,
       maxFrames: 0,
       progressBarDrag: false,
-      currentFrame: 0
+      currentFrame: 0,
     };
+    this.playerContainerRef = React.createRef();
   }
   componentDidUpdate(prevProps) {
     if (!isNaN(this.props.frame) && this.props.frame !== prevProps.frame) {
       this.goToFrame(this.props.frame);
     }
     if (this.props.levUrl !== prevProps.levUrl) {
-      this.recreateController(this.props.recUrl, this.props.levUrl, this.props.shirtUrl);
+      this.recreateController(
+        this.props.recUrl,
+        this.props.levUrl,
+        this.props.shirtUrl
+      );
       return;
     }
     if (this.props.recUrl !== prevProps.recUrl && this.props.recUrl) {
@@ -45,22 +50,28 @@ class RecPlayer extends Component {
     this.initPlayer({
       levUrl: this.props.levUrl,
       recUrl: this.props.recUrl,
-      shirtUrl: this.props.shirtUrl
+      shirtUrl: this.props.shirtUrl,
     });
   }
 
   changeReplays = (recUrl, shirtUrl) => {
-    const recs = recUrl.split(';');
+    const recs = recUrl.split(";");
     this.cnt.changeReplays(recs, shirtUrl);
   };
 
   recreateController = (recUrl, levUrl, shirtUrl) => {
     this.removeAnimationLoop();
-    this.playerContainer.querySelector("canvas").remove();
+
+    // Ensure canvas is removed only if it exists
+    const canvas = this.playerContainerRef.current.querySelector("canvas");
+    if (canvas) {
+      canvas.remove();
+    }
+
     this.initPlayer({
       levUrl,
       recUrl,
-      shirtUrl
+      shirtUrl,
     });
   };
   removeAnimationLoop = () => {
@@ -82,22 +93,27 @@ class RecPlayer extends Component {
       this.setState({
         maxFrames: maxFrames,
         currentFrame: currentFrame > maxFrames ? maxFrames : currentFrame,
-        progress: (currentFrame / maxFrames) * 100
+        progress: (currentFrame / maxFrames) * 100,
       });
   };
-  initPlayer = urls => {
+  initPlayer = (urls) => {
+    // Check if canvas already exists before creating a new one
+    if (this.playerContainerRef.current.querySelector("canvas")) {
+      return;
+    }
+
     controller(
       urls.levUrl,
       this.props.imageUrl || "http://www.recsource.tv/images",
-      this.playerContainer,
+      this.playerContainerRef.current,
       document,
       this.frameCallback,
       this.props.autoPlay || false
-    )(cnt => {
+    )((cnt) => {
       this.cnt = cnt;
       this.autoResize();
       if (urls.recUrl) {
-        const recs = urls.recUrl.split(';');
+        const recs = urls.recUrl.split(";");
         cnt.loadReplays(recs, urls.shirtUrl);
       }
       cnt.player().setScale(this.props.zoom || 0.8);
@@ -129,14 +145,14 @@ class RecPlayer extends Component {
     });
   };
   autoResize = () => {
-    if (this.cnt && this.playerContainer) {
+    if (this.cnt && this.playerContainerRef.current) {
       let w =
         ((this.props.width == "auto" || this.state.fullscreen) &&
-          this.playerContainer.offsetWidth) ||
+          this.playerContainerRef.current.offsetWidth) ||
         this.props.width;
       let h =
         ((this.props.height == "auto" || this.state.fullscreen) &&
-          this.playerContainer.offsetHeight) ||
+          this.playerContainerRef.current.offsetHeight) ||
         this.props.height;
       this.cnt.resize(w, h);
     }
@@ -151,7 +167,7 @@ class RecPlayer extends Component {
         this.disableWakeLock();
       }
       this.setState({
-        playing: isPlaying
+        playing: isPlaying,
       });
       this.props.onPlayPause && this.props.onPlayPause(isPlaying);
     }
@@ -159,19 +175,19 @@ class RecPlayer extends Component {
   fullscreen = () => {
     this.setState((prevState, props) => {
       return {
-        fullscreen: !prevState.fullscreen
+        fullscreen: !prevState.fullscreen,
       };
     }, this.autoResize);
   };
-  goToFrame = frame => {
+  goToFrame = (frame) => {
     if (this.cnt) {
       this.cnt.setFrame(frame);
     }
   };
-  progressBarOnMouseDown = e => {
+  progressBarOnMouseDown = (e) => {
     if (this.cnt) {
       this.setState({
-        progressBarDrag: true
+        progressBarDrag: true,
       });
       this._wasPlaying = this.cnt.player().playing();
       if (this._wasPlaying) {
@@ -179,7 +195,7 @@ class RecPlayer extends Component {
       }
       this.goToFrame(
         this.state.maxFrames *
-        (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
+          (e.nativeEvent.offsetX / e.currentTarget.offsetWidth)
       );
     }
   };
@@ -189,7 +205,7 @@ class RecPlayer extends Component {
       this.playPause();
     }
   };
-  progressBarOnTouchMove = e => {
+  progressBarOnTouchMove = (e) => {
     if (this._progressBar) {
       let pos =
         (e.touches[0].clientX -
@@ -209,7 +225,7 @@ class RecPlayer extends Component {
       this.playPause();
     }
     this.setState({
-      progressBarDrag: false
+      progressBarDrag: false,
     });
   };
   progressBarOnTouchEnd = () => {
@@ -217,12 +233,11 @@ class RecPlayer extends Component {
       this.playPause();
     }
     this.setState({
-      progressBarDrag: false
+      progressBarDrag: false,
     });
   };
-  onMouseMove = e => {
-    if (this._mouseDown)
-      this._mouseDrag = true;
+  onMouseMove = (e) => {
+    if (this._mouseDown) this._mouseDrag = true;
 
     if (this.state.progressBarDrag && this._progressBar) {
       let pos =
@@ -233,7 +248,7 @@ class RecPlayer extends Component {
       this.goToFrame(this.state.maxFrames * pos);
     }
   };
-  frameToTimestamp = frame => {
+  frameToTimestamp = (frame) => {
     let time = Math.floor((frame * 100) / 30);
     let csec = (time % 100).toString().padStart(2, 0);
     time = Math.floor(time / 100);
@@ -242,7 +257,7 @@ class RecPlayer extends Component {
     return time > 0 ? time + ":" + sec + ":" + csec : sec + ":" + csec;
   };
   playerContainerOnTouchStart = (e) => {
-    this.playerContainer.focus();
+    this.playerContainerRef.current.focus();
 
     if (e.touches.length === 2) {
       this._pinch = true;
@@ -273,21 +288,21 @@ class RecPlayer extends Component {
       this._preDist = dist;
     }
   };
-  onClick = e => {
-    if (e.target.localName === 'canvas' && !this._mouseDrag) {
+  onClick = (e) => {
+    if (e.target.localName === "canvas" && !this._mouseDrag) {
       this.playPause();
     }
-  }
-  onMouseDown = e => {
-    if (e.target.localName === 'canvas') {
+  };
+  onMouseDown = (e) => {
+    if (e.target.localName === "canvas") {
       this._mouseDown = true;
     }
-  }
-  onDoubleClick = e => {
-    if (e.target.localName === 'canvas') {
+  };
+  onDoubleClick = (e) => {
+    if (e.target.localName === "canvas") {
       this.fullscreen();
     }
-  }
+  };
   enableWakeLock = async () => {
     if (!this.props.wakeLock) {
       return;
@@ -306,20 +321,20 @@ class RecPlayer extends Component {
     }
 
     try {
-      this._wakeLock = await navigator.wakeLock.request('screen');
-      this._wakeLock.addEventListener('release', () => {
+      this._wakeLock = await navigator.wakeLock.request("screen");
+      this._wakeLock.addEventListener("release", () => {
         this._wakeLock = null;
       });
     } catch (err) {
       console.error(err);
     }
-  }
+  };
   disableWakeLock = async () => {
     if (this._wakeLock) {
       await this._wakeLock.release();
       this._wakeLock = null;
     }
-  }
+  };
   latestApple = () => {
     if (this.cnt && this.cnt.player().appleTimes()) {
       const latestApple = this.cnt
@@ -341,10 +356,10 @@ class RecPlayer extends Component {
     if (this.cnt && this.cnt.player()) {
       const pl = this.cnt.player();
       const scale = pl.scale();
-      if (action === 'in') {
+      if (action === "in") {
         pl.setScale(scale * 1.2);
       }
-      if (action === 'out') {
+      if (action === "out") {
         pl.setScale(scale / 1.2);
       }
     }
@@ -360,10 +375,10 @@ class RecPlayer extends Component {
     if (this.cnt && this.cnt.player()) {
       const pl = this.cnt.player();
       const speed = pl.speed();
-      if (action === 'faster') {
+      if (action === "faster") {
         pl.setSpeed(speed / 0.8);
       }
-      if (action === 'slower') {
+      if (action === "slower") {
         pl.setSpeed(speed * 0.8);
       }
     }
@@ -375,7 +390,7 @@ class RecPlayer extends Component {
       if (speed) {
         return `${parseFloat(Math.abs(speed)).toFixed(2)}x`;
       }
-      return '1.00x';
+      return "1.00x";
     }
   };
 
@@ -391,7 +406,7 @@ class RecPlayer extends Component {
         style={{
           height:
             this.props.height === "auto" ? "100%" : this.props.height + "px",
-          width: this.props.width === "auto" ? "100%" : this.props.width + "px"
+          width: this.props.width === "auto" ? "100%" : this.props.width + "px",
         }}
         className={className}
         onClick={this.onClick}
@@ -404,17 +419,15 @@ class RecPlayer extends Component {
           onTouchEnd={this.playerContainerOnTouchEnd}
           onTouchMove={this.playerContainerOnTouchMove}
           tabIndex="0"
-          ref={element => {
-            this.playerContainer = element;
-          }}
+          ref={this.playerContainerRef}
         >
           {this.props.controls && (
             <div className="RecPlayer-controls">
               <div
                 className="RecPlayer-controls-progress-bar"
-                ref={el => (this._progressBar = el)}
-                onMouseDown={e => this.progressBarOnMouseDown(e)}
-                onTouchMove={e => this.progressBarOnTouchMove(e)}
+                ref={(el) => (this._progressBar = el)}
+                onMouseDown={(e) => this.progressBarOnMouseDown(e)}
+                onTouchMove={(e) => this.progressBarOnTouchMove(e)}
                 onTouchStart={this.progressBarOnTouchStart}
                 onTouchEnd={this.progressBarOnTouchEnd}
               >
@@ -450,12 +463,12 @@ class RecPlayer extends Component {
                 >
                   <img src={FullscreenIcon} />
                 </div>
-                
+
                 {this.props.showPlaybackBtns ? (
                   <>
                     <div
                       className="RecPlayer-controls-button RecPlayer-controls-button-zoom"
-                      onClick={() => this.speed('faster')}
+                      onClick={() => this.speed("faster")}
                       title="Faster playback speed"
                     >
                       <img src={ForwardIcon} />
@@ -465,7 +478,7 @@ class RecPlayer extends Component {
                     </div>
                     <div
                       className="RecPlayer-controls-button RecPlayer-controls-button-zoom"
-                      onClick={() => this.speed('slower')}
+                      onClick={() => this.speed("slower")}
                       title="Slower playback speed"
                     >
                       <img src={BackwardIcon} />
@@ -483,14 +496,14 @@ class RecPlayer extends Component {
                   <>
                     <div
                       className="RecPlayer-controls-button RecPlayer-controls-button-zoom"
-                      onClick={() => this.zoom('in')}
+                      onClick={() => this.zoom("in")}
                       title="Zoom in"
                     >
                       <img src={ZoomInIcon} />
                     </div>
                     <div
                       className="RecPlayer-controls-button RecPlayer-controls-button-zoom"
-                      onClick={() => this.zoom('out')}
+                      onClick={() => this.zoom("out")}
                       title="Zoom out"
                     >
                       <img src={ZoomOutIcon} />
