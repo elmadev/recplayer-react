@@ -104,11 +104,12 @@ class RecPlayer extends Component {
 
     controller(
       urls.levUrl,
-      this.props.imageUrl || "http://www.recsource.tv/images",
+      this.props.resourcePath || "https://elma.online/lgr/get/",
       this.playerContainerRef.current,
       document,
       this.frameCallback,
-      this.props.autoPlay || false
+      this.props.autoPlay || false,
+      this.props.lgrOverride || false,
     )((cnt) => {
       this.cnt = cnt;
       this.autoResize();
@@ -400,7 +401,6 @@ class RecPlayer extends Component {
       : "RecPlayer";
 
     if (this.state.progressBarDrag) className += " RecPlayer-progressBar-drag";
-
     return (
       <div
         style={{

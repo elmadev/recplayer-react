@@ -44,3 +44,9 @@ If you want to develop this project follow these instructions:
 4. Clone https://github.com/elmadev/elmaonline-web
      * in that project folder run `npx link "path_to_recplayer-react_folder"`
 5. Your local recplayer-react is now symlinked to elmaonline-web project and you can see and test your changes live there
+
+### Troubleshooting
+If the above instructions don't work for some reason, you can try some of the following:
+* Try removing recplayer-react from the `package.json` dependency list in elmaonline-web to make sure the dev version is correctly linked, instead of the published package
+* If you are getting an error saying that the module is lacking a default export, in elmaonline-web, try adding the following parameter to `vite.config.js`: config.resolve.preserveSymlinks = true
+* If an old version of the build is being loaded instead of the most up-to-date version, try changing the scripts in `package.json` to add --force: `vite --force`. This will force vite to update its cache every time you manually close and restart the server.
