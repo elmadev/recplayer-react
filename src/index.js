@@ -21,6 +21,14 @@ class RecPlayer extends Component {
       currentFrame: 0,
     };
     this.playerContainerRef = React.createRef();
+
+    this.lgrFrom = this.props.lgrFrom || 'level'
+    this.lgrUrl = this.props.lgrUrl
+    if(!this.lgrUrl) {
+      if(this.lgrFrom === 'level') {
+        this.lgrUrl = 'https://api.elma.online/api/lgr/get/'
+      }
+    }
   }
   componentDidUpdate(prevProps) {
     if (!isNaN(this.props.frame) && this.props.frame !== prevProps.frame) {
@@ -103,13 +111,23 @@ class RecPlayer extends Component {
     }
 
     controller(
+      /*//Legacy way of passing parameters:
       urls.levUrl,
-      this.props.resourcePath || "https://elma.online/lgr/get/",
+      'https://api.elma.online/recplayer',
       this.playerContainerRef.current,
       document,
       this.frameCallback,
-      this.props.autoPlay || false,
-      this.props.lgrOverride || false,
+      this.props.autoPlay || false,*/
+      {levelUrl: urls.levUrl,
+        elem: this.playerContainerRef.current,
+        document: document,
+        onFrameUpdate: this.frameCallback,
+        autoPlay: this.props.autoPlay || false,
+        lgrFrom: this.props.lgrFrom || 'level',
+        lgrUrl: this.props.lgrUrl || 'https://api.elma.online/lgr/get/',
+        defaultLgrUrl: this.props.defaultLgrUrl || 'https://api.elma.online/lgr/get/default',
+        legacy_url: this.props.legacyLgrUrl || 'https://api.elma.online/recplayer',
+      }
     )((cnt) => {
       this.cnt = cnt;
       this.autoResize();
