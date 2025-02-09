@@ -13,13 +13,16 @@ import RecPlayer from "recplayer-react";
 <RecPlayer
   recUrl="http://janka.la:5050/downloads/brec/129645"
   levUrl="http://janka.la:5050/downloads/lev/398698"
+  lgrFrom="file"
+  lgrUrl="https://api.elma.online/lgr/get/default"
+  defaultLgrUrl="https://up.elma.online/u/ly8259kxy2/Default.lgr"
+  legacy_url="https://api.elma.online/recplayer"
   width="auto"
   height={200}
   zoom={0.7}
   controls
   autoPlay
   wakeLock
-  imageUrl="http://www.recsource.tv/images"
   onInitialize={cnt => someFunction(cnt)}
   onPlayPause={isPlaying => someFunction(isPlaying)}
   frame={250}
