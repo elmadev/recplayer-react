@@ -103,12 +103,23 @@ class RecPlayer extends Component {
     }
 
     controller(
+      /*//Legacy way of passing parameters:
       urls.levUrl,
-      this.props.imageUrl || "http://www.recsource.tv/images",
+      'https://api.elma.online/recplayer',
       this.playerContainerRef.current,
       document,
       this.frameCallback,
-      this.props.autoPlay || false
+      this.props.autoPlay || false,*/
+      {levelUrl: urls.levUrl,
+        elem: this.playerContainerRef.current,
+        document: document,
+        onFrameUpdate: this.frameCallback,
+        autoPlay: this.props.autoPlay || false,
+        lgrFrom: this.props.lgrFrom || 'legacy',
+        lgrUrl: this.props.lgrUrl || 'https://api.elma.online/lgr/get/',
+        defaultLgrUrl: this.props.defaultLgrUrl || 'https://api.elma.online/lgr/get/default',
+        legacy_url: this.props.legacyLgrUrl || 'https://api.elma.online/recplayer',
+      }
     )((cnt) => {
       this.cnt = cnt;
       this.autoResize();
@@ -400,7 +411,6 @@ class RecPlayer extends Component {
       : "RecPlayer";
 
     if (this.state.progressBarDrag) className += " RecPlayer-progressBar-drag";
-
     return (
       <div
         style={{
