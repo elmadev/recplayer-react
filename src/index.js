@@ -21,14 +21,6 @@ class RecPlayer extends Component {
       currentFrame: 0,
     };
     this.playerContainerRef = React.createRef();
-
-    this.lgrFrom = this.props.lgrFrom || 'level'
-    this.lgrUrl = this.props.lgrUrl
-    if(!this.lgrUrl) {
-      if(this.lgrFrom === 'level') {
-        this.lgrUrl = 'https://api.elma.online/api/lgr/get/'
-      }
-    }
   }
   componentDidUpdate(prevProps) {
     if (!isNaN(this.props.frame) && this.props.frame !== prevProps.frame) {
@@ -123,7 +115,7 @@ class RecPlayer extends Component {
         document: document,
         onFrameUpdate: this.frameCallback,
         autoPlay: this.props.autoPlay || false,
-        lgrFrom: this.props.lgrFrom || 'level',
+        lgrFrom: this.props.lgrFrom || 'legacy',
         lgrUrl: this.props.lgrUrl || 'https://api.elma.online/lgr/get/',
         defaultLgrUrl: this.props.defaultLgrUrl || 'https://api.elma.online/lgr/get/default',
         legacy_url: this.props.legacyLgrUrl || 'https://api.elma.online/recplayer',
