@@ -89,12 +89,16 @@ class RecPlayer extends Component {
     this.disableWakeLock();
   }
   frameCallback = (currentFrame, maxFrames) => {
-    this._isMounted &&
+    if (this._isMounted) {
       this.setState({
         maxFrames: maxFrames,
         currentFrame: currentFrame > maxFrames ? maxFrames : currentFrame,
         progress: (currentFrame / maxFrames) * 100,
       });
+      if (currentFrame >= maxFrames && this.state.currentFrame < maxFrames && this.props.onEnd) {
+        this.props.onEnd();
+      }
+    }
   };
   initPlayer = (urls) => {
     // Check if canvas already exists before creating a new one

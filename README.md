@@ -33,6 +33,7 @@ import RecPlayer from "recplayer-react";
     pictures: true,
     customBackgroundSky: true,
   }}
+  onEnd={() => someFunction()}
 />
 ```
 
